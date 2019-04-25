@@ -12,12 +12,9 @@ namespace Company
 
         public EmployeeViewModel()
         {
-            list = new ObservableCollection<WorkerDTO>
-            {
-                new WorkerDTO() { Name = "Имя1", SecondName = "Отчество1", SurName = "Фамилия1" },
-                new WorkerDTO() { Name = "Имя2", SecondName = "Отчество2", SurName = "Фамилия2" }
-            };
+            list = new ObservableCollection<WorkerDTO>();
             workers = new CollectionView(list);
+            Sql.GetData(this);
         }
 
         public CollectionView Workers
@@ -39,11 +36,15 @@ namespace Company
         /// <param name="secondName">Отчество</param>
         /// <param name="surName">Фамилия</param>
         /// <param name="depart">Департамент</param>
-        public void AddWorker(string name, string secondName, string surName, object depart)
+        public void AddWorker(int id, string name, string secondName, string surName, string depart)
         {
-            DepartmentDTO department = (DepartmentDTO)depart;
-            if(department != null)
-                list.Add(new WorkerDTO() { Name = name, SecondName = secondName, SurName = surName, Department = department.DepartName });
+            list.Add(new WorkerDTO() { Id = id, Name = name, SecondName = secondName, SurName = surName, Department = depart });
+        }
+
+        public void SaveWorker(int id, string name, string secondName, string surName, string depart)
+        {
+            Sql.WriteData(new WorkerDTO() { Id = id, Name = name, SecondName = secondName, SurName = surName, Department = depart });
+            AddWorker(id, name, secondName, surName, depart);
         }
 
         /// <summary>
@@ -52,6 +53,7 @@ namespace Company
         /// <param name="employee">Сотрудник</param>
         public void DelEmployee(object employee)
         {
+            Sql.DelData(employee);
             list.Remove((WorkerDTO)employee);
             employee = null;
             GC.Collect();
@@ -69,8 +71,8 @@ namespace Company
             worker.SecondName = secondName;
             worker.SurName = surName;
             DepartmentDTO department = (DepartmentDTO)depart;
-            if (department != null)
-                worker.Department = department.DepartName;
+            worker.Department = department.DepartName;
+            Sql.ChangeData(worker);
         }
     }
 }

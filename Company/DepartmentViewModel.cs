@@ -13,9 +13,8 @@ namespace Company
         public DepartmentViewModel()
         {
             list = new ObservableCollection<DepartmentDTO>();
-            list.Add(new DepartmentDTO() { DepartName = "first" });
-            list.Add(new DepartmentDTO() { DepartName = "second" });
             departments = new CollectionView(list);
+            Sql.GetData(this);
         }
 
         public string Department
@@ -37,9 +36,15 @@ namespace Company
         /// Добавление департамента в список
         /// </summary>
         /// <param name="name">Наименование департамента</param>
-        public void AddDepart(string name)
+        public void AddDepart(int id, string name)
         {
-            list.Add(new DepartmentDTO() { DepartName = name });
+            list.Add(new DepartmentDTO() { Id = id, DepartName = name });
+        }
+
+        public void SaveDepart(int id, string name)
+        {
+            Sql.WriteData(new DepartmentDTO() { Id = id, DepartName = name });
+            AddDepart(id, name);
         }
 
         /// <summary>
@@ -54,6 +59,7 @@ namespace Company
                 if (employee.GetEmployeeList[i].Department == depart.DepartName)
                     employee.DelEmployee(employee.GetEmployeeList[i]);
             }
+            Sql.DelData(depart);
             list.Remove(depart);
             department = null;
             GC.Collect();
@@ -66,18 +72,18 @@ namespace Company
         /// <param name="departmentName">Наименование департамента</param>
         public void ChangeDepartmentName(object depart, string departmentName, EmployeeViewModel employee)
         {
+            var department = (DepartmentDTO)depart;
             foreach (var s in employee.GetEmployeeList)
             {
-                var department = (DepartmentDTO)depart;
-                if(s.Department == department.DepartName)
+                if (s.Department == department.DepartName)
+                {
                     s.Department = departmentName;
+                    Sql.ChangeData(s);
+                }
             }
 
-            foreach (var department in list)
-            {
-                if (department == depart)
-                    department.DepartName = departmentName;
-            }
+            department.DepartName = departmentName;
+            Sql.ChangeData(department);
         }
     }
 }

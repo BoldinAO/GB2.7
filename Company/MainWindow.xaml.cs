@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using Company.DTO;
+using System.Windows;
 
 namespace Company
 {
@@ -22,7 +23,7 @@ namespace Company
         /// </summary>
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            depart.AddDepart(DepartNameTB.Text);
+            depart.SaveDepart(depart.Departments.Count + 1, DepartNameTB.Text);
             DepartNameTB.Clear();
         }
 
@@ -63,7 +64,18 @@ namespace Company
         /// </summary>
         private void BtAddWorker_Click(object sender, RoutedEventArgs e)
         {
-            emoloyee.AddWorker(TbFirstName.Text, TbSecondName.Text, TbSurname.Text, departCB.SelectedItem);
+            emoloyee.SaveWorker(emoloyee.GetEmployeeList[emoloyee.GetEmployeeList.Count - 1].Id + 1, TbFirstName.Text, TbSecondName.Text, TbSurname.Text, (departCB.SelectedItem as DepartmentDTO).DepartName);
+        }
+
+        private void ListView_SelectionChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        {
+            if(listView.SelectedItem != null)
+            {
+                TbFirstName.Text = (listView.SelectedItem as WorkerDTO).Name;
+                TbSecondName.Text = (listView.SelectedItem as WorkerDTO).SecondName;
+                TbSurname.Text = (listView.SelectedItem as WorkerDTO).SurName;
+                departCB.Text = (listView.SelectedItem as WorkerDTO).Department;
+            }
         }
     }
 }

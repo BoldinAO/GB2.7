@@ -4,7 +4,7 @@
     {
         string departName;
         //Id департамента
-        public int Id { get; }
+        public int Id { get; set; }
         //Наименование департамента
         public string DepartName {
             get

@@ -7,7 +7,7 @@
         private string _surName;
         private string _department;
         //Id департамента
-        public int Id { get; }
+        public int Id { get; set; }
         //Имя сотрудника
         public string Name { get { return _name; } set { _name = value; OnPropertyChanged("Name"); } }
         //Фамилия сотрудника
